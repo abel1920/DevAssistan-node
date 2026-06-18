@@ -1,7 +1,7 @@
 import { config } from "../config.js";
 import { client } from "./anthropic-client.js";
 
-
+//Muestra la respuesta en la consola mientras se está escribiendo
 export async function streamClaude(prompt: string, systemPrompt?: string): Promise<string> {
     let fullResponse =""
     const responseStream = client.messages.stream({

@@ -1,4 +1,9 @@
-export type Role = "user" | "assistan";
+
+/* Role	Quién lo usa
+"user"	El usuario hace una pregunta
+"assistant"	Claude responde */
+export type Role = "user" | "assistant";
+
 
 export interface Message {
     role: Role;
@@ -51,16 +56,16 @@ export interface AppConfig {
     anthropicApiKey: string;
     openaiApiKey: string;
     anthropicModel: string;
-    openaiModel:string;
-    openaiEmbeddingModel:string;
-    docsPath:string;
-    dbPath:string;
-    ragTopK:number;
+    openaiModel: string;
+    openaiEmbeddingModel: string;
+    docsPath: string;
+    dbPath: string;
+    ragTopK: number;
 }
 
-export interface AgentResponse{
-    text:string;
-    toolsUsed:string;
-    inputToken:number;
-    outputToken:number;
+export interface AgentResponse {
+    text: string;
+    toolsUsed: string;
+    inputToken: number;
+    outputToken: number;
 }
