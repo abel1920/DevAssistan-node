@@ -4,8 +4,8 @@ import { AppConfig } from "./types.js";
 //carga el archivo env. al iniciar
 loadDotenv()
 
-function getRequiredEnvVar(name: string, defaultValude?: string): string {
-    const value = process.env[name] ?? defaultValude
+function getRequiredEnvVar(name: string, defaultValue?: string): string {
+    const value = process.env[name] ?? defaultValue
     if (value === undefined) {
         throw new Error(`Variable de entorno requerida no encontrada: ${name}`);
     }

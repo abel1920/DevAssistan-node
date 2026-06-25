@@ -10,11 +10,14 @@ export class Conversation {
     private totalInputsTokens: number = 0
     private totalOuputsTokens: number = 0
 
-    constructor(
-        systemPrompt: string = ""
-    ) {
+    // PARÉNTESIS ()
+    constructor(systemPrompt: string = "")
+    //        ↑ Los parámetros van AQUÍ
+    //        Esto significa: "Este constructor recibe un parámetro llamado systemPrompt"
+    {
         this.systemPrompt = systemPrompt
     }
+    // ↑ El CUERPO (lo que hace) va AQUÍ
 
     addUserMessage(text: string): void {
 
@@ -24,7 +27,7 @@ export class Conversation {
         })
     }
 
-    addAssistanMessage(text: string): void {
+    addAssistantMessage(text: string): void {
         this.messages.push({
             role: "assistant",
             content: text
@@ -47,7 +50,7 @@ export class Conversation {
             throw new Error("Claude no retorno un bloque de texto en la respuesta");
         }
         const responseText = textBlock.text
-        this.addAssistanMessage(responseText)
+        this.addAssistantMessage(responseText)
         return responseText
     }
 
@@ -71,20 +74,20 @@ export class Conversation {
     }
 
     //Hace una estimación simple de tokens a partir de caracteres:
-    stimateCurrentTokens(): number {
+    estimateCurrentTokens(): number {
         const totalChars = this.messages.reduce((sum, msg) => sum + msg.content.length, 0)
         return Math.floor(totalChars / CHARS_PER_TOKEN);
     }
 
     //Devuelve estadísticas
     getStats(): {
-        inputToken: number;
-        ouputTokens: number;
+        inputTokens: number;
+        outputTokens: number;
         turns: number
     } {
         return {
-            inputToken: this.totalInputsTokens,
-            ouputTokens: this.totalOuputsTokens,
+            inputTokens: this.totalInputsTokens,
+            outputTokens: this.totalOuputsTokens,
             turns: this.getTurnCount()
         }
     }
