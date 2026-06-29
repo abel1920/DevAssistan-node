@@ -34,7 +34,7 @@ export interface Chunk {
     metadata: {
         source: string;
         heading: string;
-        position: string;
+        position: number;
         charCount: number;
     }
 }
