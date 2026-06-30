@@ -87,7 +87,7 @@ export function chunkMardown(content: string, filePath: string): Chunk[] {
 }
 
 // funcion para leer archivos markdown
-export async function proccesDirectory(directoryPath: string,): Promise<Chunk[]> {
+export async function processDirectory(directoryPath: string,): Promise<Chunk[]> {
     const allChunk: Chunk[] = []
     let entries;
     try {

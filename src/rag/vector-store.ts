@@ -3,7 +3,6 @@ import * as sqliteVec from 'sqlite-vec';
 import * as path from "path";
 import * as fs from 'fs'
 import type { Chunk, SearchResult } from '../types.js';
-import { dir } from "console";
 
 interface ChunkRow {
     id: string;

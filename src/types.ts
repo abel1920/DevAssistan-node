@@ -65,7 +65,7 @@ export interface AppConfig {
 
 export interface AgentResponse {
     text: string;
-    toolsUsed: string;
-    inputToken: number;
-    outputToken: number;
+    toolsUsed: string[];
+    inputTokens: number;
+    outputTokens: number;
 }

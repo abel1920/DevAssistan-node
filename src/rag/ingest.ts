@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises'
 import * as path from "path"
 import config from '../config.js'
-import { proccesDirectory } from './chunker.js';
+import { processDirectory } from './chunker.js';
 import { generateEmbeddings } from './embeddings.js';
 import { VectorStore } from './vector-store.js';
 
@@ -10,7 +10,7 @@ const PREVIEW_JSON = path.join(path.dirname(config.dbPath), "chuncks-preview.jso
 export async function runIngest(docsPath: string = config.docsPath): Promise<void> {
     console.log(`Iniciando ingestion desde: ${docsPath}`)
     console.log("")
-    const chunks = await proccesDirectory(docsPath)
+    const chunks = await processDirectory(docsPath)
     if (chunks.length === 0) {
         console.log("No se encontraron archivos .md en el directorio")
     }
