@@ -7,6 +7,8 @@ import { VectorStore } from "../rag/vector-store.js";
 import { resetStore } from "../rag/retriever.js";
 import { DevAssistantAgent } from "../agent/agent.js";
 import { ALL_TOOL_DEFINITIONS } from "../agent/tool-registry.js";
+import { checkGuardrails, createRateLimiter } from "../security/guardrails.js";
+import { calculateCost } from "../utils/cost-calculator.js";
 
 
 
@@ -51,6 +53,7 @@ export async function startCLI(): Promise<void> {
     output: process.stdout,
   });
   const devAssistantAgent = new DevAssistantAgent();
+  const rateLimiter = createRateLimiter();
 
   console.log("╔════════════════════════════════════════╗");
   console.log("║         DevAssistant v1.0              ║");
@@ -72,10 +75,16 @@ export async function startCLI(): Promise<void> {
       }
       if (userInput === "/stats") {
         const stats = devAssistantAgent.getStats();
+        const sessionCost = calculateCost({
+          inputTokens: stats.inputTokens,
+          outputTokens: stats.outputTokens,
+          model: config.anthropicModel,
+        });
         console.log(`\n📊 Estadísticas de la conversación:`);
         console.log(`   • Turnos: ${stats.turns}`);
         console.log(`   • Tokens de entrada acumulados: ${stats.inputTokens}`);
         console.log(`   • Tokens de salida acumulados: ${stats.outputTokens}`);
+        console.log(`   • Costo estimado de sesión: ${sessionCost.formatted}`);
         console.log(
           `   • Tools Calls en último turno: ${stats.toolCallsLastTurn}`,
         );
@@ -84,11 +93,17 @@ export async function startCLI(): Promise<void> {
       }
       if (userInput === "/exit" || userInput === "/salida") {
         const stats = devAssistantAgent.getStats();
+        const sessionCost = calculateCost({
+          inputTokens: stats.inputTokens,
+          outputTokens: stats.outputTokens,
+          model: config.anthropicModel,
+        });
         console.log(`\n¡Hasta luego!`);
         console.log(
           ` Resumen: ${stats.turns} turnos ` +
           `${stats.inputTokens} tokens de entrada ` +
-          `${stats.outputTokens} tokens de salida `,
+          `${stats.outputTokens} tokens de salida ` +
+          `${sessionCost.formatted} costo estimado `,
         );
         rl.close();
         return;
@@ -129,10 +144,20 @@ export async function startCLI(): Promise<void> {
         return;
       }
       try {
+        const guardrail = checkGuardrails(userInput, rateLimiter);
+        if (!guardrail.safe) {
+          console.log(`\n${guardrail.reason}`);
+          promptUser();
+          return;
+        }
+        const secureText = guardrail.sanitized;
         process.stdout.write(`\nDevAssitantAgent: `);
-        const response = await devAssistantAgent.chat(userInput, (fragment) => {
-          process.stdout.write(fragment);
-        });
+        const response = await devAssistantAgent.chat(
+          secureText,
+          (fragment) => {
+            process.stdout.write(fragment);
+          },
+        );
         process.stdout.write(`\n`);
         if (response.toolsUsed.length > 0) {
           const uniqueTools = [...new Set(response.toolsUsed)];
